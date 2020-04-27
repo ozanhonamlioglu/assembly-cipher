@@ -6,6 +6,7 @@ section .text
 global _start
 
 _start:
+    printString hello
     printDigit 132
     exitProgram
 

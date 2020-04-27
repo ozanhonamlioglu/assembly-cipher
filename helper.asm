@@ -1,7 +1,16 @@
 %include "def.asm"
 
-%macro printString 0
-    
+%macro printString 1
+    ; string'in karakter sayısını bulabilmek için 0 rakamını bulana kadar döngü yaratacağız
+    mov r8, 0 ; counter'ı sıfır'a eşitledik
+    mov rax, %1 ; rax'i string'e pointer olarak kullanıyoruz
+    %%findLengthOfString:
+        inc r8 ; her döngü de counter'imiz olan r8'i +1 yapıyoruz
+        inc rax ; pointer'in değerini de +1 yapıyoruz ki, string'i tarayabilelim
+        cmp [rax], byte 0 ; rax'in point etmiş olduğu değer'i sıfır ile karşılaştırıyoruz
+        jnz %%findLengthOfString
+
+    simplePrint %1, r8
 %endmacro
 
 %macro printDigit 1
@@ -26,19 +35,20 @@
 
     ; digitSpace içerisinde ki değerleri ekrana byte byte yazdırıyoruz
     %%printDigitByDigit:
-        simplePrint r10 ; her seferinde r10 içerisinde ki bir byte'lık değeri yazdırıyoruz
+        simplePrint r10, 1 ; her seferinde r10 içerisinde ki bir byte'lık değeri yazdırıyoruz
         dec r10 ; r10 adresini de her döngü de küçültüyoruz
         dec r8 ; r8 ile de sıfır'a varana kadar işlem döngü tanımlıyor olacağız
         cmp r8, 0 ; r8 sıfır'a vardı mı ?
         jnz %%printDigitByDigit
 %endmacro
 
-%macro simplePrint 1
+%macro simplePrint 2
     mov rax, SYS_WRITE
     mov rdi, STD_OUT
-    mov rsi, %1
-    mov rdx, 1
+    mov rsi, %1 ; string'in kendisi
+    mov rdx, %2 ; basılacak olan verinin uzunluğu
     syscall
+    xor rdx, rdx ; yazma işlemi sonunda print subroutine'nin uzunluk parametresi olan rdx'i sıfırlıyoruz, aksi halde hatalara yol açıyor. (Floating point exception)
 %endmacro
 
 %macro exitProgram 0
