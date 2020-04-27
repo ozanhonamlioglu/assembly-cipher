@@ -1,3 +1,3 @@
 ## An Assembly Project
-Cipher gets a text as an argument, and adds +1 to each character.  
+Cipher gets a string as an argument, and adds +1 to each character.  
 That is what it can all do...
